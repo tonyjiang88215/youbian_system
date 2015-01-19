@@ -1,0 +1,355 @@
+<?php
+include_once dirname(dirname(__FILE__)).'/inc.php';
+
+$action = $_GET['action'];
+
+$callback = $_GET['callback'];
+
+switch($action){
+	case 'detail_list':
+		
+		$version_id = $_GET['version'];
+		
+		$result = factory::getModel('edu_curriculumn_version_detail')->get_details($version_id);
+		
+		break;
+		
+	case 'tree':
+		
+		$type = $_GET['type'];
+		$subject_id = $_GET['subject'];
+		$section_id = $_GET['section'];
+		$version_id = $_GET['version'];
+		$book_id =$_GET['book'];
+		
+		switch(intval($type)){
+			case 1://同步
+				
+				$units = factory::getModel('edu_unit')->get_units_by_bookid($version_id , $subject_id , $book_id);
+				$chapters = factory::getModel('edu_chapter')->get_chapters_by_bookid($version_id , $subject_id , $book_id);
+				
+				$result = array();
+				
+				foreach($units as $unit){
+					$tmp = array('id'=>$unit['id'],'name'=>$unit['unit'],'children'=>array());
+						
+					foreach($chapters as $chapter){
+						if($chapter['unit_id'] == $unit['id']){
+							$tmp['children'][] = array('id'=>$chapter['id'],'name'=>$chapter['chapter_name'],'children'=>array());
+						}
+					}
+					$result[] = $tmp;
+				}
+				
+				break;
+				
+			case 2://知识点
+				$result = factory::getModel('edu_knowledge')->get_knowledges($version_id , $subject_id , $section_id);
+				break;
+				
+			case 3://专题
+				$result = factory::getModel('edu_zhuanti')->get_zhuantis($version_id , $subject_id , $section_id);
+				
+				
+				break;
+			
+		}
+		
+		break;
+		
+	case 'create_tongbu':
+		$version = $_POST['version'];
+		$subject = $_POST['subject'];
+		$section = $_POST['section'];
+		$publisher = $_POST['publisher'];
+		$book = $_POST['book'];
+	
+		//先建立结构
+		$result1 = factory::getModel('edu_curriculumn_version')->post_create_tongbu($version , $subject);
+	
+		//如果建立结构成功，追加记录
+		if($result1 !== false){
+				
+			$insertArray = array();
+				
+			for($i = 0 ; $i < count($book) ; $i++){
+				$insertArray[] = array(
+						'subject_id'=>$subject,
+						'section_id'=>$section,
+						'version_id'=>$version,
+						'book_id'=>$book[$i]['id'],
+						'type'=>1,
+						'time'=>time(),
+						'text'=>$book[$i]['text']
+				);
+			}
+				
+			$result2 = factory::getModel('edu_curriculumn_version_detail')->post_new_detail($insertArray);
+		}else{
+			$result2 = false;
+		}
+	
+		$result = $result1 && $result2;
+	
+		break;
+		
+	case 'create_knowledge':
+		
+		$version = $_POST['version'];
+		$subject = $_POST['subject'];
+		$section = $_POST['section'];
+		$text = $_POST['text'];
+		
+		//先建立结构
+		$result1 = factory::getModel('edu_curriculumn_version')->post_create_knowledge($version , $subject);
+		
+		//如果结构建立成功或者已经存在
+		if($result1){
+			$insertArray = array(
+				array(
+					'subject_id'=>$subject,
+					'section_id'=>$section,
+					'version_id'=>$version,
+					'type'=>2,
+					'time'=>time(),
+					'text'=>$text
+				)
+			);
+			$result2 = factory::getModel('edu_curriculumn_version_detail')->post_new_detail($insertArray);
+		}else{
+			$result2 =false;
+		}
+		
+		//如果建立结构成功，追加记录
+		$result = $result1 && $result2;
+		
+		break;
+		
+	case 'create_zhuanti':
+		
+		$version = $_POST['version'];
+		$subject = $_POST['subject'];
+		$section = $_POST['section'];
+		$text = $_POST['text'];
+		
+		//先建立结构
+		$result1 = factory::getModel('edu_curriculumn_version')->post_create_zhuanti($version , $subject);
+		
+		//如果结构建立成功或者已经存在
+		if($result1){
+			$insertArray = array(
+					array(
+							'subject_id'=>$subject,
+							'section_id'=>$section,
+							'version_id'=>$version,
+							'type'=>3,
+							'time'=>time(),
+							'text'=>$text
+					)
+			);
+			$result2 = factory::getModel('edu_curriculumn_version_detail')->post_new_detail($insertArray);
+		}else{
+			$result2 =false;
+		}
+		
+		//如果建立结构成功，追加记录
+		$result = $result1 && $result2;
+		
+		break;
+	
+	case 'setin_tongbu':
+	
+		$detail_id = $_POST['detail'];
+	
+		$toVersion = $_POST['to_version'];
+		$toSubject = $_POST['to_subject'];
+		$toBook = $_POST['to_book'];
+	
+		$fromVersion = $_POST['from_version'];
+		$fromSubject = $_POST['from_subject'];
+		$fromBook = $_POST['from_book'];
+	
+		$ref = $_POST['ref'];
+	
+		try{
+			
+			//先导入单元数据
+			$resultUnit = factory::getModel('edu_unit')->copyData($toVersion , $toSubject , $toBook , $fromVersion , $fromSubject , $fromBook);
+		
+			//再导入章节数据
+			$resultChapter = factory::getModel('edu_chapter')->copyData($toVersion , $toSubject , $toBook , $fromVersion , $fromSubject , $fromBook);
+		
+			//最后导入章节对应题目关系表数据
+			$resultChapterRelation = factory::getModel('edu_chapter_to_question')->copyData($toVersion , $toSubject , $toBook , $fromVersion , $fromSubject , $fromBook);
+		
+			$result = $resultUnit && $resultChapter && $resultChapterRelation;
+			
+			if($result){
+				$result = factory::getModel('edu_curriculumn_version_detail')->post_setin_success($detail_id , $ref);
+			}
+		}catch(Exception $e){
+			$result = false;
+		}
+	
+	
+		break;
+		
+		
+	case 'setin_knowledge':
+		$detail_id = $_POST['detail'];
+	
+		$toVersion = $_POST['to_version'];
+		$toSubject = $_POST['to_subject'];
+		$toSection = $_POST['to_section'];
+	
+		$fromVersion = $_POST['from_version'];
+		$fromSubject = $_POST['from_subject'];
+		$fromSection = $_POST['from_section'];
+	
+		$ref = $_POST['ref'];
+		try{
+			//先导入知识点数据
+			$resultKnowledge = factory::getModel('edu_knowledge')->copyData($toVersion , $toSubject , $toSection , $fromVersion , $fromSubject , $fromSection);
+		
+			//最后导入知识点对应题目关系表数据
+			$resultKnowledgeRelation = factory::getModel('edu_knowledge_to_question')->copyData($toVersion , $toSubject , $toSection , $fromVersion , $fromSubject , $fromSection);
+		
+			$result = $resultKnowledge && $resultKnowledgeRelation;
+		
+			if($result){
+				$result = factory::getModel('edu_curriculumn_version_detail')->post_setin_success($detail_id , $ref);
+			}
+		
+		}catch(Exception $e){
+			$result = false;
+		}
+	
+		break;
+		
+	case 'setin_zhuanti':
+		
+		$detail_id = $_POST['detail'];
+		
+		$toVersion = $_POST['to_version'];
+		$toSubject = $_POST['to_subject'];
+		$toSection = $_POST['to_section'];
+		
+		$fromVersion = $_POST['from_version'];
+		$fromSubject = $_POST['from_subject'];
+		$fromSection = $_POST['from_section'];
+		
+		$ref = $_POST['ref'];
+		
+		try{
+			//先导入知识点数据
+			$resultKnowledge = factory::getModel('edu_zhuanti')->copyData($toVersion , $toSubject , $toSection , $fromVersion , $fromSubject , $fromSection);
+			
+			//最后导入知识点对应题目关系表数据
+			$resultKnowledgeRelation = factory::getModel('edu_zhuanti_to_question')->copyData($toVersion , $toSubject , $toSection , $fromVersion , $fromSubject , $fromSection);
+			
+			$result = $resultKnowledge && $resultKnowledgeRelation;
+			
+			if($result){
+				$result = factory::getModel('edu_curriculumn_version_detail')->post_setin_success($detail_id , $ref);
+			}
+		
+		}catch(Exception $e){
+			$result = false;
+		}
+		
+		break;
+
+	case 'clear_tongbu':
+	
+		$detail_id = $_POST['detail'];
+	
+		$version = $_POST['version'];
+		$subject = $_POST['subject'];
+		$book = $_POST['book'];
+	
+		//先删除章节对应题目关系表数据
+		$resultChapterRelation = factory::getModel('edu_chapter_to_question')->clearData($version , $subject , $book);
+	
+		//在删除章节数据
+		$resultChapter = factory::getModel('edu_chapter')->clearData($version , $subject , $book);
+		
+		//最后删除单元数据
+		$resultUnit = factory::getModel('edu_unit')->clearData($version , $subject , $book);
+		
+		$result = $resultUnit && $resultChapter && $resultChapterRelation;
+		
+// 		if($result){
+		$result = factory::getModel('edu_curriculumn_version_detail')->post_clear_success($detail_id);
+// 		}
+		
+	
+		break;
+		
+	case 'clear_knowledge':
+		
+		$detail_id = $_POST['detail'];
+	
+		$version = $_POST['version'];
+		$subject = $_POST['subject'];
+		$section = $_POST['section'];
+	
+		//先删除知识点对应题目关系表数据
+		$resultKnowledgeRelation = factory::getModel('edu_knowledge_to_question')->clearData($version , $subject , $section);
+	
+		//在删除知识点数据
+		$resultKnowledge = factory::getModel('edu_knowledge')->clearData($version , $subject , $section);
+	
+	
+		$result = $resultKnowledgeRelation && $resultKnowledge;
+	
+// 		if($result){
+			$result = factory::getModel('edu_curriculumn_version_detail')->post_clear_success($detail_id);
+// 		}
+	
+	
+		break;
+		
+	case 'clear_zhuanti':
+		
+		$detail_id = $_POST['detail'];
+		
+		$version = $_POST['version'];
+		$subject = $_POST['subject'];
+		$section = $_POST['section'];
+		
+		//先删除知识点对应题目关系表数据
+		$resultZhuantiRelation = factory::getModel('edu_zhuanti_to_question')->clearData($version , $subject , $section);
+		
+		//在删除知识点数据
+		$resultZhuanti = factory::getModel('edu_zhuanti')->clearData($version , $subject , $section);
+		
+		
+		$result = $resultZhuantiRelation && $resultZhuanti;
+		
+// 		if($result){
+			$result = factory::getModel('edu_curriculumn_version_detail')->post_clear_success($detail_id);
+// 		}
+		
+		break;
+		
+	case 'delete_detail':
+		
+		$detail_id = $_POST['detail'];
+		
+		$result = factory::getModel('edu_curriculumn_version_detail')->deleteById($detail_id);
+		
+		
+		break;
+		
+	case 'complete_detail':
+		
+		$detail_id = $_POST['detail'];
+		
+		$result = factory::getModel('edu_curriculumn_version_detail')->deleteById($detail_id);
+		
+		break;
+		
+	
+}
+
+echo $callback.'('.json_encode($result).')';

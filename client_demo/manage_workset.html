@@ -1,0 +1,186 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>用户管理-华夏资源管理中心</title>
+    </head>
+    <body>
+        <link href="/manage_system/css/common.css" type="text/css" rel="stylesheet">
+        <link href="/manage_system/js/jquery/jquery.custom.min.css" type="text/css" rel="stylesheet">
+        <!--  加载JQuery，作为基础类库 -->
+        <script type="text/javascript" src="/manage_system/js/jquery/jquery.js">
+        </script>
+        <script type="text/javascript" src="/manage_system/js/jquery/jquery.custom.min.js">
+        </script>
+        <!-- 加载TJ对象，包含基础事件流、数据共享对象 -->
+        <script type="text/javascript" src="/manage_system/js/TJ.js">
+        </script>
+        <div class="main">
+            <div class="top">
+                <style type="text/css">
+                    .menu_title {
+                        color: #FFFFFF;
+                        font-size: 20px;
+                        padding: 5px 0 0 15px;
+                        float: left;
+                    }
+                    
+                    .menubar {
+                        position: relative;
+                        float: right;
+                        margin-right: 20px;
+                        margin-top: 20px;
+                    }
+                    
+                    .menubar Li {
+                        float: right;
+                        list-style: none;
+                        padding-left: 20px;
+                    }
+                    
+                    .logout {
+                        color: white;
+                        text-decoration: none;
+                    }
+                </style>
+                <div class="logo">
+                    <div class="menu_title">
+                        华夏安业资源管理系统
+                    </div>
+                    <div class="menubar">
+                        <div class="">
+                            <div class="">
+                                <ul>
+                                    <li>
+                                        <a class="logout" href="/manage_system/verify.php?action=logout">退出</a>
+                                    </li>
+                                    <li>
+                                        你好，<strong></strong>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sep" style="*left:0;">
+                </div>
+            </div>
+            <div class="nav">
+                <div class="nav_content">
+                    <div class="nav_element nav_element_unselect">
+                        <a href="javascript:void(0);">
+                            <div class="nav_icon nav_icon_unselect">
+                            </div>
+                            <div class="nav_ele_link">
+                                后台管理
+                            </div>
+                            <div class="clear_float">
+                            </div>
+                        </a>
+                    </div>
+                    <div class="nav_element_son" style="display:none;">
+                        <div class="nav_element_son_element">
+                            <a href="manage_user.html" style="">用户管理</a>
+                        </div>
+                        <div class="nav_element_son_element">
+                            <a href="javascript:void(0);" style="">用户组管理</a>
+                        </div>
+                        <div class="nav_element_son_element">
+                            <a href="javascript:void(0);" style="">工作组管理</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav_content">
+                    <div class="nav_element nav_element_unselect">
+                        <a href="javascript:void(0);">
+                            <div class="nav_icon nav_icon_unselect">
+                            </div>
+                            <div class="nav_ele_link">
+                                工作管理
+                            </div>
+                            <div class="clear_float">
+                            </div>
+                        </a>
+                    </div>
+                    <div class="nav_element_son" style="display:none;">
+                        <div class="nav_element_son_element">
+                            <a href="javascript:void(0);" style="">工作列表</a>
+                        </div>
+                        <div class="nav_element_son_element">
+                            <a href="javascript:void(0);" style="">工作模版</a>
+                        </div>
+                        <div class="nav_element_son_element">
+                            <a href="javascript:void(0);" style="">工作节点</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav_content">
+                    <div class="nav_element nav_element_unselect">
+                        <a href="javascript:void(0);">
+                            <div class="nav_icon nav_icon_unselect">
+                            </div>
+                            <div class="nav_ele_link">
+                                基础管理
+                            </div>
+                            <div class="clear_float">
+                            </div>
+                        </a>
+                    </div>
+                    <div class="nav_element_son" style="display:none;">
+                        <div class="nav_element_son_element">
+                            <a href="javascript:void(0);" style="">版本管理</a>
+                        </div>
+                        <div class="nav_element_son_element">
+                            <a href="javascript:void(0);" style="">同步教材管理</a>
+                        </div>
+                        <div class="nav_element_son_element">
+                            <a href="javascript:void(0);" style="">专题管理</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav_content">
+                    <div class="nav_element nav_element_unselect">
+                        <a href="javascript:void(0);">
+                            <div class="nav_icon nav_icon_unselect">
+                            </div>
+                            <div class="nav_ele_link">
+                                资源管理
+                            </div>
+                            <div class="clear_float">
+                            </div>
+                        </a>
+                    </div>
+                    <div class="nav_element_son" style="display:none;">
+                        <div class="nav_element_son_element">
+                            <a href="javascript:void(0);" style="">版本管理</a>
+                        </div>
+                        <div class="nav_element_son_element">
+                            <a href="javascript:void(0);" style="">同步教材管理</a>
+                        </div>
+                        <div class="nav_element_son_element">
+                            <a href="javascript:void(0);" style="">专题管理</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav_footer">
+                    Powered By TonyJiang ©2013
+                </div>
+                <script type="text/javascript">
+                    
+                    $('.nav_element').click(function(){
+                        $('.nav_element_select').find('.nav_icon').toggleClass('nav_icon_select nav_icon_unselect');
+                        $('.nav_element_select').next('[class=nav_element_son]').toggle();
+                        $('.nav_element_select').toggleClass('nav_element_select nav_element_unselect');
+                        
+                        $(this).toggleClass('nav_element_select nav_element_unselect');
+                        $(this).next('[class=nav_element_son]').toggle();
+                        $(this).find('.nav_icon').toggleClass('nav_icon_select nav_icon_unselect');
+                        
+                    });
+                </script>
+            </div>
+			
+			
+			
+        </div>
+    </body>
+</html>

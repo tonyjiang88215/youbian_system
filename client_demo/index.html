@@ -1,0 +1,844 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>用户管理-华夏资源管理中心</title>
+    </head>
+    <body>
+        <link href="/manage_system/css/common.css" type="text/css" rel="stylesheet">
+        <link href="/manage_system/js/jquery/jquery.custom.min.css" type="text/css" rel="stylesheet">
+        <!--  加载JQuery，作为基础类库 -->
+        <script type="text/javascript" src="/manage_system/js/jquery/jquery.js">
+        </script>
+        <script type="text/javascript" src="/manage_system/js/jquery/jquery.custom.min.js">
+        </script>
+        <!-- 加载TJ对象，包含基础事件流、数据共享对象 -->
+        <script type="text/javascript" src="/manage_system/js/TJ.js"></script>
+		
+		
+		<script type='text/javascript'>
+			
+			$(document).ready(function(){
+				
+				/** 菜单展开 */
+				$('.nav_parent').click(function(){
+					
+					if ($('.nav').hasClass('nav_mini') && $(this).parent().hasClass('nav-list')) {
+						return;
+					}
+					
+					//如果已经展开
+					if($(this).hasClass('nav_open')){
+						
+						//关闭
+						$(this).removeClass('nav_open').children('.nav_sub_ul').slideUp(200);
+						
+						//如果有子项被选中，关闭以后，设置当前被选中
+						if($(this).find('.nav_active').length > 0){
+							$(this).children('.nav_text').children('.nav_select_tag').show(200);
+						}
+						
+					//如果没有展开	
+					}else{
+						
+						//先把其他展开关闭（不关闭当前激活项）
+						$(this).siblings('.nav_open:not(.nav_active)').removeClass('nav_open').children('.nav_sub_ul').slideUp(200);
+						
+						//展开
+						$(this).addClass('nav_open').children('.nav_sub_ul').slideDown(200);
+						
+						//如果有子项被选中，隐藏当前被选中
+						if($(this).find('.nav_active').length > 0){
+							$(this).children('.nav_text').children('.nav_select_tag').hide(200);
+						}
+						
+						
+					}
+					
+					return false;
+						
+				});
+				
+				$('.nav-list > li').mouseenter(function(){
+					if($('.nav').hasClass('nav_mini')){
+						$(this).addClass('mini_hover');
+//						$(this).children('.nav_sub_ul').show();
+						
+						//如果有子项被选中，隐藏当前被选中
+						if($(this).find('.nav_active').length > 0){
+							$(this).children('.nav_text').children('.nav_select_tag').hide(200);
+						}
+					}
+				});
+				
+				$('.nav-list > li').mouseleave(function(){
+					if($('.nav').hasClass('nav_mini')){
+						$(this).removeClass('mini_hover');
+//						$(this).children('.nav_sub_ul').hide();
+						
+						//如果有子项被选中，关闭以后，设置当前被选中
+						if($(this).find('.nav_active').length > 0){
+							$(this).children('.nav_text').children('.nav_select_tag').show(200);
+						}
+						
+					}
+				});
+				
+				$('.nav_text').click(function(){
+					if($(this).next().length == 0){
+						return false;
+					}
+				});
+				
+				/** 收缩按钮 */
+				$('.nav_hide_btn').click(function(){
+					//如果已经隐藏，则展开
+					if($(this).attr('hide') == 'hide'){
+						
+						$('.nav').removeClass('nav_mini');
+						
+						$('.nav-list > li:has(.nav_select_tag:visible)').children('a').children('.nav_select_tag').hide(200);
+						
+						$(this).attr('hide' , 'show')
+						
+						$('.content').css('left','181px');
+						
+						
+					}else{//隐藏
+					
+						//有子项被选中的，显示选中效果
+						$('.nav-list > li:has(.nav_select_tag:visible)').children('a').children('.nav_select_tag').show(200);
+						
+						$('.nav').addClass('nav_mini');
+						$(this).attr('hide' , 'hide');
+						
+						$('.content').css('left','57px');
+					}
+				});
+				
+				
+			});
+			
+		</script>
+		
+        <div class="main">
+            <div class="top">
+                <style type="text/css">
+                    .menu_title {
+                        color: #FFFFFF;
+                        font-size: 20px;
+                        padding: 5px 0 0 15px;
+                        float: left;
+                    }
+                    
+                    .menubar {
+                        position: relative;
+                        float: right;
+                        margin-right: 20px;
+                        margin-top: 20px;
+                    }
+                    
+                    .menubar Li {
+                        float: right;
+                        list-style: none;
+                        padding-left: 20px;
+                    }
+                    
+                    .logout {
+                        color: white;
+                        text-decoration: none;
+                    }
+                </style>
+                <div class="logo">
+                    <div class="menu_title">
+                        华夏安业资源管理系统
+                    </div>
+                    <div class="menubar">
+                        <div class="">
+                            <div class="">
+                                <ul>
+                                    <li>
+                                        <a class="logout" href="/manage_system/verify.php?action=logout">退出</a>
+                                    </li>
+                                    <li>
+                                        你好，<strong></strong>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sep" style="*left:0;">
+                </div>
+            </div>
+            <div class="nav" style='background:#fafafa;'>
+                <div class="nav_content">
+                	
+					<style type='text/css'>
+						
+						.nav{
+							position:absolute;
+							width:180px;
+							top:54px;
+							bottom:0px;
+							background:#EEF7FC;
+							border-right:1px solid #ccc;
+						}
+						
+						.nav_mini{
+							width:56px;
+						}
+						
+						
+						.nav_shadow{
+							position: absolute;
+							width: 183px;
+							height: 100%;
+							top: 0;
+							left: 0;
+							background: #ebebeb;
+							z-index: -1;
+						}
+
+						
+						.nav_ul{
+							margin:0;
+							padding:0;
+							list-style:none;
+						}
+						
+						.nav_sub_ul{
+							display:none;
+							margin:0;
+							padding:0;
+							list-style:none;
+							border-top: 1px solid #e5e5e5;
+							background:#fff;
+						}
+						
+						.nav_open > .nav_sub_ul{
+							display:block;
+						}
+						
+						/* 第一层 */
+						.nav-list > li > .nav_text{
+							border-left:4px solid #fafafa;
+						}
+						
+						.nav-list > li > .nav_text:hover{
+							border-left:4px solid #2b7dbc;
+						}
+						
+						.nav-list > li > .nav_selected{
+							font-weight:bold;
+							color:#2b7dbc;
+						}
+						
+						
+						/* 第二层 */
+						.nav-list>li>.nav_sub_ul>li>.nav_text{
+							padding-left:36px;
+							background:url('/manage_system/pic/client/bg_nav1.png') no-repeat 16px -3px;
+						} 
+						
+						.nav-list> li>.nav_sub_ul>li.nav_active>.nav_text{
+							background:url('/manage_system/pic/client/bg_nav_select.png') no-repeat 16px -3px;
+						}
+						
+						.nav-list>li>.nav_sub_ul>li>.nav_text:hover{
+							background:url('/manage_system/pic/client/bg_nav_select.png') no-repeat 16px -3px;
+						}
+						
+						/* 第三层 */
+						.nav-list>li>.nav_sub_ul>li>.nav_sub_ul>li>.nav_text{
+							padding-left:53px;
+							background:url('/manage_system/pic/client/bg_nav2.png') no-repeat 16px 0px;
+						}
+						
+						.nav-list>li>.nav_sub_ul>li>.nav_sub_ul>li>.nav_text:hover{
+							color:#2b7dbc;
+							text-decoration:underline;
+						}
+						
+						/* 第4层 */
+						.nav-list>li>.nav_sub_ul>li>.nav_sub_ul>li>.nav_sub_ul>li>.nav_text{
+							padding-left:69px;
+							background:url('/manage_system/pic/client/bg_nav2.png') no-repeat 16px 0px;
+						}
+						
+						.nav-list>li>.nav_sub_ul>li>.nav_sub_ul>li>.nav_sub_ul>li>.nav_text:hover{
+							color:#2b7dbc;
+							text-decoration:underline;
+						}
+						
+						/* 第5层 */
+						.nav-list>li>.nav_sub_ul>li>.nav_sub_ul>li>.nav_sub_ul>li.nav_sub_ul>li>.nav_text{
+							padding-left:75px;
+							background:url('/manage_system/pic/client/bg_nav2.png') no-repeat 16px 0px;
+						}
+						
+						.nav_sub_ul>li:first-child{
+							border-top: 1px solid #fafafa;
+						}
+						
+						.nav_sub_ul>li:last-child{
+							border-bottom: 0;
+						}
+						
+						.nav_li{
+							padding: 0;
+							margin: 0;
+							border: 0;
+							border-top: 1px solid #fcfcfc;
+							border-bottom: 1px solid #e5e5e5;
+							position: relative;
+							cursor:pointer;
+						}
+						
+						
+						
+						.nav-list>li>.nav_sub_ul>li{
+						}
+						
+						.nav_text{
+							height:38px;
+							line-height:36px;
+							color:#585858;
+							font-size:12px;
+							padding:0 16px 0 7px;
+							text-decoration:none;
+							display:block;
+							vertical-align:middle;
+						}
+						
+						.nav_icon{
+							display:inline-block;
+							min-width:30px;
+							height:36px;
+							margin-right:5px;
+							background-image:url("/manage_system/pic/manage_system/total.png");
+							float:left;
+						}
+						
+						
+						.nav_label{
+							display:inline;
+							line-height:36px;
+						}
+						
+						.nav_parent>a>.nav_toggle{
+							display:inline-block;
+						}
+						
+						.nav_toggle{
+							display:none;
+							width:14px;
+							height:14px;
+							position:absolute;
+							top:10px;
+							right:11px;
+							background:url('/manage_system/pic/client/bg_nav_slide.png') 0px 14px;
+						}
+						
+						.nav_select_tag{
+							display:none;
+						}
+						
+						.nav_active > .nav_text > .nav_select_tag{
+							display:inline-block;
+							width:14px;
+							height:40px;
+							position:absolute;
+							top:-1px;
+							right:-2px;
+							background:url('/manage_system/pic/client/bg_nav_select_tag.png') no-repeat 0px 1px;
+						}
+						
+						.nav_open > .nav_text{
+							color:#2b7dbc;
+						}
+						
+						.nav_active > .nav_text{
+							color:#2b7dbc;
+						}
+						
+						.nav_active > .nav_text > .nav_toggle{
+							background-position:0px 0px;
+						}
+						
+						.nav_open > .nav_text > .nav_toggle{
+							background-position:0px 0px;
+						}
+						
+						.nav-list > .nav_active{
+							width:180px;
+							border-right:2px solid #577abe;
+						}
+						
+						.nav_icon{
+							background:url('/manage_system/pic/client/bg_info.png') no-repeat 4px 6px;
+						}
+						
+						.nav_hide{
+							position:relative;
+							height:20px;
+							border-bottom:1px solid #e5e5e5;
+						}
+						
+						.nav_hide_bg{
+							position:absolute;
+							top:10px;
+							height:1px;
+							left:0;
+							right:0;
+							background:#e5e5e5;
+						}
+						
+						
+						.nav_hide_btn{
+							position:relative;
+							width:20px;
+							height:20px;
+							left:75px;
+							background:url('/manage_system/pic/client/bg_nav_mini.png') no-repeat 0px 0px;
+							cursor:pointer;
+						}
+						
+						.nav_footer{
+							position:absolute;
+							bottom:0px;
+							height:30px;
+							line-height:30px;
+							width:100%;
+							background:#FFF;
+							border-top:1px solid #CCE0EC;
+							text-align:center;
+							font-size:10px;
+						}
+						
+						
+						
+						
+						/* 第一层 */
+						.nav_mini .nav-list > li{
+							width:56px;
+						}
+						.nav_mini .nav-list > li > .nav_sub_ul{
+							position: absolute;
+							top: 38px;
+							left: 57px;
+							width: 181px;
+							border: 1px solid #c1c1c1;
+							background: #fff;
+							z-index: 3;
+							display:none;
+							-webkit-box-shadow: rgba(0, 0, 0, 0.2) 2px 1px 2px 0px;
+							box-shadow: rgba(0, 0, 0, 0.2) 2px 1px 2px 0px;
+						}
+						
+						.nav_mini .nav-list > li.mini_hover > .nav_sub_ul{
+							display:block;
+						}
+						
+						.nav_mini .nav-list > li > .nav_text > .nav_label {
+							display: none;
+							position: absolute;
+							width: 173px;
+							top:-2px;
+							left: 57px;
+							height:39px;
+							padding-left: 8px;
+							background: #f5f5f5;
+							z-index: 3;
+							border: 1px solid #c1c1c1;
+							-webkit-box-shadow: rgba(0, 0, 0, 0.2) 2px 1px 2px 0px;
+							box-shadow: rgba(0, 0, 0, 0.2) 2px 1px 2px 0px;
+						}
+						
+						.nav_mini .nav-list > li.mini_hover > .nav_text > .nav_label {
+							display:block;
+						}
+						
+						.nav_mini  .nav-list > li > .nav_text >.nav_toggle{
+							display:none;
+						}
+						
+						
+						/* 第二层 */
+						.nav_mini .nav-list>li>.nav_sub_ul>li>.nav_text{
+							padding-left:36px;
+							background:none;
+						} 
+						
+						.nav_mini .nav-list>li>.nav_sub_ul>li.nav_active>.nav_text{
+							background:url('/manage_system/pic/client/bg_nav3.png') no-repeat 16px 0px;
+						}
+						
+						.nav_mini .nav-list>li>.nav_sub_ul>li>.nav_text:hover{
+							background:url('/manage_system/pic/client/bg_mini_nav.png') no-repeat 16px 0px;
+						}
+						
+						
+						/* 第三层 */
+						.nav_mini .nav-list>li>.nav_sub_ul>li>.nav_sub_ul>li>.nav_text{
+							padding-left:53px;
+							background:none;
+						}
+						
+						.nav_mini .nav-list>li>.nav_sub_ul>li>.nav_sub_ul>li>.nav_text:hover{
+							color:#2b7dbc;
+							text-decoration:underline;
+						}
+						
+						/* 第4层 */
+						.nav_mini .nav-list>li>.nav_sub_ul>li>.nav_sub_ul>li>.nav_sub_ul>li>.nav_text{
+							padding-left:69px;
+							background:none;
+						}
+						
+						.nav_mini .nav-list>li>.nav_sub_ul>li>.nav_sub_ul>li>.nav_sub_ul>li>.nav_text:hover{
+							color:#2b7dbc;
+							text-decoration:underline;
+						}
+						
+						/* 第5层 */
+						.nav_mini .nav-list>li>.nav_sub_ul>li>.nav_sub_ul>li>.nav_sub_ul>li.nav_sub_ul>li>.nav_text{
+							padding-left:75px;
+							background:none;
+						}
+						
+						.nav_mini .nav_shadow{
+							width: 59px;
+						}
+						
+						.nav_mini .nav_hide_btn{
+							left:16px;
+							background:url('/manage_system/pic/client/bg_nav_mini2.png');
+						}
+						
+					</style>
+					
+					<!-- 第1层 -->
+                	<ul class='nav_ul nav-list'>
+                		<li class='nav_li nav_parent nav_active nav_open'>
+                			<a class='nav_text' >
+                				<div class='nav_icon'></div>
+								<span class='nav_label'>第1层菜单</span>
+								<div class='nav_toggle'></div>
+								<div class='nav_select_tag' style='display:none;'></div>
+							</a>
+							<!-- 第2层 -->
+							<ul class='nav_sub_ul nav_active nav_open'>
+		                		<li class='nav_li nav_parent nav_active nav_open'>
+		                			<a class='nav_text' >
+		                				<span class='nav_label'>第2层菜单</span>
+										<div class='nav_toggle'></div>
+										<div class='nav_select_tag' style='display:none;'></div>
+									</a>
+									<!-- 第3层 -->
+									<ul class='nav_sub_ul nav_active nav_open'>
+				                		<li class='nav_li nav_parent nav_active nav_open'>
+				                			<a class='nav_text' >
+				                				<span class='nav_label'>第3层菜单</span>
+												<div class='nav_toggle'></div>
+												<div class='nav_select_tag' style='display:none;'></div>
+											</a>
+											<!-- 第4层 -->
+											<ul class='nav_sub_ul nav_active nav_open'>
+						                		<li class='nav_li nav_active'>
+						                			<a class='nav_text' >
+						                				<span class='nav_label'>第四层菜单</span>
+														<div class='nav_toggle'></div>
+														<div class='nav_select_tag' ></div>
+													</a>
+												</li>
+						                	</ul>
+										</li>
+										<li class='nav_li'>
+											<a class='nav_text' >
+												<span class='nav_label'>用户组管理2</span>
+												<div class='nav_toggle'></div>
+												<div class='nav_select_tag' style='display:none;'></div>
+											</a>
+										</li>
+										<li class='nav_li'>
+											<a class='nav_text' >
+												<span class='nav_label'>工作组管理3</span>
+												<div class='nav_toggle'></div>
+												<div class='nav_select_tag' style='display:none;'></div>
+											</a>
+										</li>
+				                	</ul>
+								</li>
+								<li class='nav_li nav_parent'>
+									<a class='nav_text' >
+										<span class='nav_label'>用户组管理</span>
+										<div class='nav_toggle'></div>
+										<div class='nav_select_tag' style='display:none;'></div>
+									</a>
+									<ul class='nav_sub_ul'>
+				                		<li class='nav_li'>
+				                			<a class='nav_text' >
+				                				<span class='nav_label'>创建用户</span>
+											</a>
+										</li>
+				                	</ul>
+								</li>
+								<li class='nav_li nav_parent'>
+									<a class='nav_text' >
+										<span class='nav_label'>工作组管理</span>
+										<div class='nav_toggle'></div>
+										<div class='nav_select_tag' style='display:none;'></div>
+									</a>
+									<ul class='nav_sub_ul'>
+				                		<li class='nav_li'>
+				                			<a class='nav_text' >
+				                				<span class='nav_label'>创建工作组</span>
+												<div class='nav_toggle'></div>
+												<div class='nav_select_tag' style='display:none;'></div>
+											</a>
+										</li>
+				                	</ul>
+								</li>
+		                	</ul>
+							
+						</li>
+						<li class='nav_li nav_parent'>
+							<a class='nav_text' >
+								<div class='nav_icon'></div>
+								<span class='nav_label'>入库资源管理</span>
+								<div class='nav_toggle'></div>
+								<div class='nav_select_tag'></div>
+								</a>
+							<!-- 第2层 -->
+							<ul class='nav_sub_ul'>
+		                		<li class='nav_li'>
+		                			<a class='nav_text' >
+		                				<span class='nav_label'>资源入库</span>
+									</a>
+								</li>
+		                	</ul>
+						</li>
+						<li class='nav_li nav_parent'>
+							<a class='nav_text' >
+								<div class='nav_icon'></div>
+								<span class='nav_label'>在库资源管理</span>
+								<div class='nav_toggle'></div>
+								<div class='nav_select_tag'></div>
+							</a>
+							<!-- 第2层 -->
+							<ul class='nav_sub_ul'>
+		                		<li class='nav_li'>
+		                			<a class='nav_text' >
+		                				<span class='nav_label'>资源入库</span>
+									</a>
+								</li>
+		                	</ul>
+						</li>
+						<li class='nav_li'>
+							<a class='nav_text' >
+								<div class='nav_icon'></div>
+								<span class='nav_label'>基础数据管理</span>
+								<div class='nav_toggle'></div>
+								<div class='nav_select_tag'></div>
+								</a>
+						</li>
+						<li class='nav_li'>
+							<a class='nav_text' >
+								<div class='nav_icon'></div>
+								<span class='nav_label'>数据导出</span>
+								<div class='nav_toggle'></div>
+								<div class='nav_select_tag'></div>
+								</a>
+						</li>
+						<li class='nav_li'>
+							<a class='nav_text' >
+								<div class='nav_icon'></div>
+								<span class='nav_label'>统计管理</span>
+								<div class='nav_toggle'></div>
+								<div class='nav_select_tag'></div>
+								</a>
+						</li>
+                	</ul>
+					<div class='nav_hide'>
+						<div class='nav_hide_bg'></div>	
+						<div class='nav_hide_btn'></div>
+					</div>
+                </div>
+                <div class="nav_footer" style='display:none;'>
+                    Powered By TonyJiang ©2013
+                </div>
+                <script type="text/javascript">
+                    
+                    $('.nav_element').click(function(){
+                        $('.nav_element_select').find('.nav_icon').toggleClass('nav_icon_select nav_icon_unselect');
+                        $('.nav_element_select').next('[class=nav_element_son]').toggle();
+                        $('.nav_element_select').toggleClass('nav_element_select nav_element_unselect');
+                        
+                        $(this).toggleClass('nav_element_select nav_element_unselect');
+                        $(this).next('[class=nav_element_son]').toggle();
+                        $(this).find('.nav_icon').toggleClass('nav_icon_select nav_icon_unselect');
+                        
+                    });
+                </script>
+				<div class="nav_shadow"></div>
+            </div>
+            <div class="content">
+                <style type="text/css">
+                    
+                    .content_main {
+                        min-width: 800px;
+                        width: 860px;
+                        /* 	margin:5px auto 0; */
+                    }
+                    
+                    .content_element {
+                        background: #fff;
+                    }
+                    
+                    .user_group_table {
+                        border-collapse: collapse;
+                        margin: 10px 5px;
+                    }
+                    
+                    .user_group_table td {
+                        border: 1px solid #c1c1c1;
+                        text-align: center;
+                        padding: 2px 5px;
+                    }
+                    
+                    .pager_container {
+                        float: right;
+                        padding: 2px 5px;
+                        margin-top: 5px;
+                    }
+                    
+                    td.group_id {
+                        width: 30px;
+                    }
+                    
+                    td.group_name {
+                        width: 220px;
+                    }
+                    
+                    td.member_count {
+                        width: 120px;
+                    }
+                    
+                    td.create_time {
+                        width: 140px;
+                    }
+                    
+                    .pager_container a, .pager_container span {
+                        color: #666;
+                    }
+                    
+                    td.group_action {
+                        width: 216px;
+                    }
+                    
+                </style>
+                <script type="text/javascript" src="/manage_system/js/user/manage_user_group_handler.js">
+                </script>
+                <div class="content_main">
+                    <div class="content_element" style="padding:5px 10px;">
+                        <div class="content_list_action" style="padding:5px;border-bottom:0;">
+                            <span class="action_panel action_insert" style="float:left;"><span class="action_panel_icon" style="background:url(&quot;/manage_system/pic/manage_system/plus.jpg&quot;);"></span><span class="action_panel_label">添加用户组</span></span>
+                            <div class="clear_float">
+                            </div>
+                        </div>
+                        <table class="user_group_table" cellpadding="0" cellspacing="0">
+                            <tbody>
+                                <tr class="table_header">
+                                    <td class="user_id" rowspan="1">
+                                        ID
+                                    </td>
+                                    <td class="group_name" style="">
+                                        用户组名称
+                                    </td>
+                                    <td class="member_count">
+                                        成员数量
+                                    </td>
+                                    <td class="create_time">
+                                        创建时间
+                                    </td>
+                                    <td class="group_action">
+                                        操作
+                                    </td>
+                                </tr>
+                                <tr class="user_group_record" id="user_group_record_template" style="display:none;">
+                                    <td class="group_id" rowspan="1">
+                                    </td>
+                                    <td class="group_name">
+                                    </td>
+                                    <td class="member_count">
+                                    </td>
+                                    <td class="create_time">
+                                    </td>
+                                    <td>
+                                        <a class="table_action" href="javascript:void(0);">修改信息</a>
+                                        <a class="table_action group_privilege" href="javascript:void(0);">查看权限</a>
+                                    </td>
+                                </tr>
+                                <tr class="user_group_record" style="display: table-row;" group_id="1">
+                                    <td class="group_id" rowspan="1">
+                                        1
+                                    </td>
+                                    <td class="group_name">
+                                        管理员组
+                                    </td>
+                                    <td class="member_count">
+                                        11
+                                    </td>
+                                    <td class="create_time">
+                                        1970-01-01 08:00:00
+                                    </td>
+                                    <td>
+                                        <a class="table_action" href="javascript:void(0);">修改信息</a>
+                                        <a class="table_action group_privilege" href="javascript:void(0);">查看权限</a>
+                                    </td>
+                                </tr>
+                                <tr class="user_group_record" style="display: table-row;" group_id="2">
+                                    <td class="group_id" rowspan="1">
+                                        2
+                                    </td>
+                                    <td class="group_name">
+                                        测试组
+                                    </td>
+                                    <td class="member_count">
+                                        0
+                                    </td>
+                                    <td class="create_time">
+                                        2013-12-21 14:37:07
+                                    </td>
+                                    <td>
+                                        <a class="table_action" href="javascript:void(0);">修改信息</a>
+                                        <a class="table_action group_privilege" href="javascript:void(0);">查看权限</a>
+                                    </td>
+                                </tr>
+                                <tr class="user_group_record" style="display: table-row;" group_id="3">
+                                    <td class="group_id" rowspan="1">
+                                        3
+                                    </td>
+                                    <td class="group_name">
+                                        测试组2
+                                    </td>
+                                    <td class="member_count">
+                                        0
+                                    </td>
+                                    <td class="create_time">
+                                        2013-12-23 08:22:43
+                                    </td>
+                                    <td>
+                                        <a class="table_action" href="javascript:void(0);">修改信息</a>
+                                        <a class="table_action group_privilege" href="javascript:void(0);">查看权限</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
