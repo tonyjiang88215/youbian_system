@@ -1,0 +1,1 @@
+D:\AppServ\php5\php.exe -q D:\AppServ\s8s\task\minute_task.php
